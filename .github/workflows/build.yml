@@ -24,13 +24,14 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    # --- NEU: SDK HERUNTERLADEN (Verhindert Git-Fehler) ---
+   # --- NEU: SDK HERUNTERLADEN (Mit korrigiertem Link) ---
     - name: Download X-Plane SDK
       shell: bash
       run: |
-        curl -L "https://developer.x-plane.com/wp-content/plugins/code-sample-generation/sample_templates/XPSDK401.zip" -o xpsdk.zip
+        # Wir nutzen den neuen Link für SDK 4.2.0
+        curl -L "https://developer.x-plane.com/wp-content/plugins/code-sample-generation/sdk_zip_files/XPSDK420.zip" -o xpsdk.zip
         unzip -q xpsdk.zip
-        # Wir benennen den Ordner um, damit wir den Pfad genau kennen
+        # Laminar packt das oft in einen Ordner "SDK". Wir benennen ihn um, um sicher zu sein.
         mv SDK XPlaneSDK
 
     # Linux Dependencies installieren
