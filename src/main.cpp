@@ -6,7 +6,14 @@
 #include "XPLMMenus.h"
 #include "XPLMProcessing.h"
 #include "imgui.h"
+
+// Apple braucht einen anderen Header Pfad für OpenGL
+#if APL
+#include <OpenGL/gl.h>
+#else
 #include <GL/gl.h>
+#endif
+
 #include <string>
 #include <vector>
 #include <cmath>

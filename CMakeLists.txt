@@ -53,17 +53,28 @@ if(WIN32)
     # Die Dateiendung von .dll auf .xpl ändern (Wichtig für X-Plane!)
     set_target_properties(${PROJECT_NAME} PROPERTIES SUFFIX ".xpl")
 
-# --- Mac OS Einstellungen (Falls du es mal brauchst) ---
 elseif(APPLE)
     add_definitions(-DAPL=1 -DXPLM200 -DXPLM210 -DXPLM300)
+    
+    # Auf dem Mac müssen wir System-Frameworks finden
+    find_library(COCOA_LIBRARY Cocoa)
+    find_library(OPENGL_LIBRARY OpenGL)
+    find_library(IOKIT_LIBRARY IOKit)
+    find_library(COREVIDEO_LIBRARY CoreVideo)
+
+    # Wir linken gegen die Frameworks
+    # "-F" sagt dem Linker, wo er nach X-Plane Frameworks suchen soll
     target_link_libraries(${PROJECT_NAME}
         PRIVATE
-        ${XP_SDK_PATH}/Libraries/Mac/XPLM
-        ${XP_SDK_PATH}/Libraries/Mac/XPWidgets
-        OpenGL::GL
+        "-F ${XP_SDK_PATH}/Libraries/Mac -framework XPLM"
+        "-F ${XP_SDK_PATH}/Libraries/Mac -framework XPWidgets"
+        ${COCOA_LIBRARY}
+        ${OPENGL_LIBRARY}
+        ${IOKIT_LIBRARY}
+        ${COREVIDEO_LIBRARY}
     )
+    
     set_target_properties(${PROJECT_NAME} PROPERTIES SUFFIX ".xpl")
-
 # --- Linux Einstellungen ---
 elseif(UNIX)
     add_definitions(-DLIN=1 -DXPLM200 -DXPLM210 -DXPLM300)
