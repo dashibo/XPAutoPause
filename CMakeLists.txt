@@ -8,7 +8,11 @@ set(CMAKE_CXX_STANDARD 17)
 
 # --- Pfade definieren ---
 # Der Pfad zum SDK (relativ zum Projektordner)
-set(XP_SDK_PATH "${CMAKE_SOURCE_DIR}/SDK")
+# Wir prüfen, ob XP_SDK_PATH schon von außen (GitHub Actions) gesetzt wurde.
+# Wenn nicht, nehmen wir den lokalen Ordner (für dein Visual Studio).
+if(NOT DEFINED XP_SDK_PATH)
+    set(XP_SDK_PATH "${CMAKE_SOURCE_DIR}/SDK")
+endif()
 
 # --- Abhängigkeiten finden ---
 # WICHTIG: Wir brauchen OpenGL für das Zeichnen der GUI
