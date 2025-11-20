@@ -24,14 +24,19 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-   # --- NEU: SDK HERUNTERLADEN (Mit korrigiertem Link) ---
+   # --- NEU: SDK HERUNTERLADEN (Mit Force-Overwrite) ---
     - name: Download X-Plane SDK
       shell: bash
       run: |
-        # Wir nutzen den neuen Link für SDK 4.2.0
         curl -L "https://developer.x-plane.com/wp-content/plugins/code-sample-generation/sdk_zip_files/XPSDK420.zip" -o xpsdk.zip
-        unzip -q xpsdk.zip
-        # Laminar packt das oft in einen Ordner "SDK". Wir benennen ihn um, um sicher zu sein.
+        
+        # WICHTIG: Wir löschen den alten SDK Ordner aus dem Repo, 
+        # damit unzip Platz hat und nicht nachfragen muss.
+        rm -rf SDK
+        
+        # -o bedeutet "Overwrite" (Überschreiben erzwingen)
+        unzip -o -q xpsdk.zip
+        
         mv SDK XPlaneSDK
 
     # Linux Dependencies installieren
