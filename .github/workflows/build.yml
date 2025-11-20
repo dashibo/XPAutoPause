@@ -1,0 +1,61 @@
+name: Build X-Plane Plugin
+
+# Wann soll gebaut werden? Bei jedem "Push" auf GitHub
+on: [push, workflow_dispatch]
+
+jobs:
+  build:
+    name: Build for ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Linux Build
+          - os: ubuntu-latest
+            platform: lin_x64
+            cmake_args: "-DCMAKE_BUILD_TYPE=Release"
+          
+          # Windows Build
+          - os: windows-latest
+            platform: win_x64
+            cmake_args: "-A x64"
+
+          # Mac Build (Universal: Intel + Apple Silicon)
+          - os: macos-latest
+            platform: mac_x64
+            cmake_args: "-DCMAKE_OSX_ARCHITECTURES='x86_64;arm64'"
+
+    steps:
+    # 1. Code herunterladen
+    - uses: actions/checkout@v3
+
+    # 2. Linux braucht extra Pakete für OpenGL (die anderen haben es ab Werk)
+    - name: Install Linux Dependencies
+      if: runner.os == 'Linux'
+      run: |
+        sudo apt-get update
+        sudo apt-get install build-essential libgl1-mesa-dev
+
+    # 3. CMake konfigurieren (Projekt vorbereiten)
+    - name: Configure CMake
+      run: cmake -B build -S . -DCMAKE_BUILD_TYPE=Release ${{ matrix.cmake_args }}
+
+    # 4. Kompilieren (Der eigentliche Bau-Vorgang)
+    - name: Build Plugin
+      run: cmake --build build --config Release --parallel
+
+    # 5. Dateien sortieren (Wir suchen die .xpl Datei und schieben sie in den richtigen Ordner)
+    - name: Organize Artifacts
+      shell: bash
+      run: |
+        mkdir -p output/${{ matrix.platform }}
+        # Suche rekursiv nach der .xpl Datei und kopiere sie
+        find build -name "*.xpl" -exec cp {} output/${{ matrix.platform }}/XP12AutoTOD.xpl \;
+
+    # 6. Hochladen, damit du es herunterladen kannst
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: XP12AutoTOD-${{ matrix.platform }}
+        path: output/${{ matrix.platform }}

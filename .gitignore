@@ -1,0 +1,18 @@
+# Visual Studio Müll ignorieren
+.vs/
+out/
+build/
+*.user
+*.suo
+*.opensdf
+*.sdf
+x64/
+Debug/
+Release/
+*.ipch
+
+# CMake Müll ignorieren
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
